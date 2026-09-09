@@ -1,52 +1,52 @@
 import { useState, useCallback } from 'react';
 import { Hero } from '@/components/Hero';
-import { LibraryShowcase } from '@/components/LibraryShowcase';
-import { PromptBuilder } from '@/components/PromptBuilder';
-import { Examples } from '@/components/Examples';
+import { Generator } from '@/components/Generator';
+import { OutputPanel } from '@/components/OutputPanel';
+import { KnowledgeShowcase } from '@/components/KnowledgeShowcase';
 import { Footer } from '@/components/Footer';
+import { generatePrompt, type MusicSpec, type PromptResult } from '@/utils/promptEngine';
+
+const defaultSpec: MusicSpec = {
+  genreId: 'cinematic',
+  emotionId: 'sad',
+  instrumentIds: ['piano'],
+  excludeInstrumentIds: [],
+  energyId: 'low',
+  tempo: null,
+  structureId: null,
+  vocals: 'instrumental',
+  description: '',
+};
 
 function App() {
-  const [selections, setSelections] = useState<Record<string, string | null>>({});
+  const [spec, setSpec] = useState<MusicSpec>(defaultSpec);
+  const [result, setResult] = useState<PromptResult | null>(null);
 
-  const handleSelect = useCallback((categoryId: string, option: string) => {
-    setSelections((prev) => {
-      const current = prev[categoryId];
-      if (current === option) {
-        const next = { ...prev };
-        next[categoryId] = null;
-        return next;
-      }
-      return { ...prev, [categoryId]: option };
-    });
-  }, []);
+  const handleGenerate = useCallback(() => {
+    const r = generatePrompt(spec);
+    setResult(r);
+    setTimeout(() => {
+      document.getElementById('output')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }, [spec]);
 
-  const handleClear = useCallback(() => {
-    setSelections({});
+  const handleReset = useCallback(() => {
+    setResult(null);
+    document.getElementById('generator')?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
   const handleExplore = useCallback(() => {
-    document.getElementById('library')?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('generator')?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
   return (
     <div className="min-h-screen bg-slate-950">
       <Hero onExplore={handleExplore} />
-
-      {/* Library + Builder layout */}
-      <section className="relative py-24 px-6 bg-slate-950">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[1fr_360px] gap-8">
-            <div>
-              <LibraryShowcase selections={selections} onSelect={handleSelect} />
-            </div>
-            <div>
-              <PromptBuilder selections={selections} onClear={handleClear} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Examples />
+      <Generator spec={spec} onSpecChange={setSpec} onGenerate={handleGenerate} />
+      <div id="output">
+        <OutputPanel result={result} onReset={handleReset} />
+      </div>
+      <KnowledgeShowcase />
       <Footer />
     </div>
   );
