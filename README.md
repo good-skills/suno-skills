@@ -1,39 +1,62 @@
-# Prompt Temple — AI Image Prompt Library
+# Suno Skills — Music Intent → Suno Prompt Compiler
 
-A beautiful, static web page showcasing a curated library of prompt modules for AI image generation. Built with React, Vite, and Tailwind CSS. Designed for deployment on GitHub Pages.
+A bilingual (English + Persian) web app that turns a musical vision — genre, emotion,
+instruments, energy, structure — into an optimized prompt for
+[Suno AI](https://suno.com), using a curated music-theory knowledge base plus
+**multi-provider AI enhancement and side-by-side variant comparison**.
+
+Built with React, Vite, Tailwind CSS, and lucide-react icons.
 
 ## Features
 
-- 6 prompt module categories (Head & Face, Body & Pose, Arms & Hands, Legs & Feet, Camera Angles, Lighting)
-- Interactive prompt builder with live preview and copy-to-clipboard
-- 4 ready-made example prompts
-- Bilingual support (English + Persian/Farsi RTL)
-- Responsive design for mobile and desktop
-- Dark theme with animated gradient backgrounds
+- **Prompt compiler** — rule engine maps 12 genres × 10 emotions × 18 instruments ×
+  5 energy levels onto concrete musical language (tonality, melodic contour, harmony,
+  dynamics, production style)
+- **Multi-provider AI enhancement** — 7 LLM providers, switchable at runtime
+- **Compare AI variants** — send one spec to several engines in parallel and tab
+  through their different takes on the same musical idea
+- **BYOK (bring your own key)** — keys are stored in the browser's localStorage and
+  sent only to the provider itself; keyless providers need nothing at all
+- **Connection tester** — verify any provider/model combo with one click before using it
+- **Conflict detection** — flags contradictory specs (e.g. piano-solo + 5 instruments,
+  very-fast tempo + calm mood) and auto-applies negative constraints
+- **Quick templates** — 8 ready-made presets (solo sad piano, epic trailer, lo-fi,
+  meditation, horror, …)
+- **Bilingual UI** — English + Persian/Farsi RTL explanations throughout
+- **Quality scores** — intent match, genre/emotion accuracy, instrument consistency,
+  Suno compatibility
 
-## Deploy to GitHub Pages
+## AI providers
 
-This project includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically builds and deploys to GitHub Pages on every push to `main`.
+| Provider | Key needed | Default model | Notes |
+| ----------------- | ---------- | ------------------------- | ------------------------------------------ |
+| LLM7.io | **No** | `minimax-m2.7` | Keyless; big catalog (Gemini 3, GPT-5.5, Claude Sonnet 5, Grok 4.6, …) |
+| Pollinations | **No** | `openai` (GPT-OSS 20B) | Keyless; anonymous fair-use tier |
+| Groq | `VITE_GROQ_API_KEY` or in-app | `qwen/qwen3.8-27b` | Ultra-fast; org/project must enable chat models |
+| Google Gemini | `VITE_GEMINI_API_KEY` or in-app | `gemini-2.0-flash` | Generous free tier via AI Studio |
+| Cerebras | `VITE_CEREBRAS_API_KEY` or in-app | `llama-3.3-70b` | Fastest tokens/sec on open models |
+| Mistral | `VITE_MISTRAL_API_KEY` or in-app | `mistral-small-latest` | Free experiment tier on La Plateforme |
+| OpenRouter | `VITE_OPENROUTER_API_KEY` or in-app | `google/gemini-2.0-flash-exp:free` | 300+ models incl. free variants |
 
-### Steps:
+The app works out of the box with the two keyless providers. Users can add their own
+keys in the **AI Engine** settings (gear icon in the output panel) — keys persist in
+`localStorage` and are never sent anywhere except the chosen provider. Optionally,
+keys can be baked in at build time via the `VITE_*` env vars above (create `.env.local`).
 
-1. Push this code to a GitHub repository
-2. Go to **Settings → Pages**
-3. Under **Source**, select **GitHub Actions**
-4. Push to `main` — the workflow will build and deploy automatically
-5. Your site will be live at `https://[username].github.io/[repo-name]/`
+If an AI request fails (network, provider error, rate limit, malformed reply), the app
+falls back to the rule-based prompt and shows the reason as a warning — it never blocks
+the user. In compare mode, each provider's failure is reported individually.
 
-## Local Development
+## Development
 
 ```bash
 npm install
-npm run dev
+npm run dev      # start dev server
+npm run build    # production build → dist/
+npm run typecheck
 ```
 
-## Build
+## Deployment
 
-```bash
-npm run build
-```
-
-Output is in the `dist/` folder.
+Static output in `dist/` — deployable to GitHub Pages, Vercel, Netlify, or any
+static host. No server-side component; LLM calls happen from the browser.
