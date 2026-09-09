@@ -89,7 +89,7 @@ function buildMessages(spec: MusicSpec, fallback: PromptResult): ChatMessage[] {
 }
 
 /** Extract a JSON object substring from an LLM reply that may contain prose or code fences. */
-function extractJson(raw: string): string {
+export function extractJson(raw: string): string {
   const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
   const candidate = (fenced ? fenced[1] : raw).trim();
 

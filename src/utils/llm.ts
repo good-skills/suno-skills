@@ -22,6 +22,7 @@ export interface LlmConfig {
   model?: string;
   apiKey?: string;
   messages: ChatMessage[];
+  temperature?: number;
 }
 
 export interface ProviderDef {
@@ -253,7 +254,7 @@ export async function chat(config: LlmConfig): Promise<string> {
   const body = {
     model,
     messages: config.messages,
-    temperature: 0.8,
+    temperature: config.temperature ?? 0.8,
   };
 
   let res: Response;

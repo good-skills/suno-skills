@@ -1,10 +1,11 @@
-import { Music, Sparkles, ArrowDown, Github } from 'lucide-react';
+import { Music, Sparkles, ArrowDown, Github, Play } from 'lucide-react';
 
 interface HeroProps {
   onExplore: () => void;
+  onSurprise: () => void;
 }
 
-export function Hero({ onExplore }: HeroProps) {
+export function Hero({ onExplore, onSurprise }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
@@ -27,7 +28,7 @@ export function Hero({ onExplore }: HeroProps) {
       />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-        {/* Badge */}
+        {/* Badge — the compiler identity, demoted to eyebrow */}
         <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
           <Music className="w-4 h-4 text-sky-400" />
           <span className="text-sm text-slate-300 font-medium tracking-wide">
@@ -35,25 +36,58 @@ export function Hero({ onExplore }: HeroProps) {
           </span>
         </div>
 
-        {/* Title */}
+        {/* Title — sell the result, not the technology */}
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6">
           <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-            Suno Skills
+            Turn your music idea into a Suno-ready prompt
           </span>
         </h1>
 
         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-4 leading-relaxed">
-          Transform your musical ideas into optimized Suno prompts.
-          Select genre, emotion, instruments, and energy — get a precisely engineered prompt.
+          Describe the song you have in your head.
+          We&apos;ll turn it into a detailed musical direction you can paste straight into Suno.
         </p>
 
         <p dir="rtl" className="text-base text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-          ایده موسیقایی خود را به پرامپت بهینه برای Suno تبدیل کنید.
-          ژانر، احساس، سازها و انرژی را انتخاب کنید — یک پرامپت دقیق دریافت کنید.
+          آهنگی که تو ذهنت است را بنویس — ما آن را به یک مسیر موسیقایی دقیق و آماده‌ی Suno تبدیل می‌کنیم.
         </p>
 
+        {/* CTA */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+          <button
+            onClick={onExplore}
+            className="group px-8 py-3.5 rounded-xl bg-white text-slate-900 font-semibold text-base
+                       hover:bg-slate-100 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10
+                       flex items-center gap-2"
+          >
+            <Sparkles className="w-4 h-4" />
+            Describe Your Song
+            <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+          </button>
+          <button
+            onClick={onSurprise}
+            className="px-8 py-3.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-semibold text-base
+                       hover:bg-white/10 transition-all duration-300 hover:scale-105
+                       flex items-center gap-2 backdrop-blur-sm"
+          >
+            <Play className="w-4 h-4" />
+            Surprise me
+          </button>
+          <a
+            href="https://github.com/good-skills/suno-skills"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-3.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-semibold text-base
+                       hover:bg-white/10 transition-all duration-300 hover:scale-105
+                       flex items-center gap-2 backdrop-blur-sm hidden sm:flex"
+          >
+            <Github className="w-4 h-4" />
+            View on GitHub
+          </a>
+        </div>
+
         {/* Stats */}
-        <div className="flex items-center justify-center gap-8 mb-10 text-center">
+        <div className="flex items-center justify-center gap-8 text-center">
           <div>
             <div className="text-2xl font-bold text-white">12</div>
             <div className="text-xs text-slate-500 uppercase tracking-wide">Genres</div>
@@ -63,36 +97,12 @@ export function Hero({ onExplore }: HeroProps) {
             <div className="text-2xl font-bold text-white">10</div>
             <div className="text-xs text-slate-500 uppercase tracking-wide">Emotions</div>
           </div>
-          <div className="w-px h-10 bg-slate-800" />
+          <div className="w-px h-10 bg-slate-800">
+          </div>
           <div>
             <div className="text-2xl font-bold text-white">18</div>
             <div className="text-xs text-slate-500 uppercase tracking-wide">Instruments</div>
           </div>
-        </div>
-
-        {/* CTA */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button
-            onClick={onExplore}
-            className="group px-8 py-3.5 rounded-xl bg-white text-slate-900 font-semibold text-base
-                       hover:bg-slate-100 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10
-                       flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4" />
-            Build Your Prompt
-            <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
-          </button>
-          <a
-            href="https://github.com/good-skills/suno-skills"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-8 py-3.5 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-semibold text-base
-                       hover:bg-white/10 transition-all duration-300 hover:scale-105
-                       flex items-center gap-2 backdrop-blur-sm"
-          >
-            <Github className="w-4 h-4" />
-            View on GitHub
-          </a>
         </div>
       </div>
 

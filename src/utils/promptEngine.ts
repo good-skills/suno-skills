@@ -8,7 +8,7 @@ export interface MusicSpec {
   energyId: string;
   tempo: 'very-slow' | 'slow' | 'moderate' | 'fast' | 'very-fast' | null;
   structureId: string | null;
-  vocals: 'none' | 'female' | 'male' | 'instrumental';
+  vocals: 'none' | 'female' | 'male' | 'instrumental' | 'any';
   description: string;
 }
 
@@ -121,6 +121,8 @@ export function generatePrompt(spec: MusicSpec): PromptResult {
     parts.push('female vocals');
   } else if (spec.vocals === 'male') {
     parts.push('male vocals');
+  } else if (spec.vocals === 'any') {
+    parts.push('expressive lead vocals');
   }
 
   // 9. Genre production style
