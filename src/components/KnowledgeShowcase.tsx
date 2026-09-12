@@ -68,8 +68,8 @@ export function KnowledgeShowcase() {
             color="violet"
             title="Suno Prompt Engineering"
             titleFa="مهندسی پرامپت Suno"
-            count="5 layers"
-            items={['Intent Extraction', 'Music Specification', 'Constraint Engine', 'Prompt Critic', 'Quality Scoring']}
+            count="6 strategies"
+            items={['Golden Formula Assembly', 'Mix & Mastering Vocabulary', 'Temporal Arc & Meta-Tags', 'Token Compression', 'Advanced Modes', 'Smart Exclusions']}
           />
 
           {/* Pipeline */}
@@ -84,13 +84,13 @@ export function KnowledgeShowcase() {
               </div>
             </div>
             <div className="space-y-2">
-              {['User Intent', 'Music Spec Generator', 'Master Skill + Sub-skills', 'Constraint & Conflict Check', 'Suno Prompt Generator', 'Prompt Critic', 'Final Prompt → Suno'].map((step, i) => (
+              {['User Intent', 'Golden Formula Assembler', 'Mode & Production Selection', 'Smart Exclusions Engine', 'Token Compressor', 'Meta-Tag Generator', 'Token Weight Visualizer', 'Final Prompt → Suno'].map((step, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-500 text-[10px] font-bold flex items-center justify-center flex-shrink-0">
                     {i + 1}
                   </span>
                   <span className="text-xs text-slate-400">{step}</span>
-                  {i < 6 && <span className="text-slate-700 text-xs">↓</span>}
+                  {i < 7 && <span className="text-slate-700 text-xs">↓</span>}
                 </div>
               ))}
             </div>

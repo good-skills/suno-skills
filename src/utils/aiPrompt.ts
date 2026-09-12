@@ -1,4 +1,4 @@
-import { genres, emotions, instruments, energyLevels, structures, templates } from '@/data/musicKnowledge';
+import { genres, emotions, instruments, energyLevels, structures, templates, getRecommendedMode, getRecommendedProduction } from '@/data/musicKnowledge';
 import type { MusicSpec, PromptResult } from '@/utils/promptEngine';
 import { chat, PROVIDERS, type ActiveAi, type ChatMessage } from '@/utils/llm';
 
@@ -10,17 +10,42 @@ import { chat, PROVIDERS, type ActiveAi, type ChatMessage } from '@/utils/llm';
  * with all warnings and explanations kept in the same shape as the rule engine.
  */
 
-const SYSTEM_PROMPT = `You are an expert Suno AI music prompt engineer. You translate a structured musical spec into a single, highly effective Suno prompt.
+const SYSTEM_PROMPT = `You are a world-class Suno AI music prompt engineer. You translate structured musical specs into two outputs:
 
-Rules:
-- Output ONLY a JSON object. No markdown, no commentary.
-- The "prompt" field: one flowing comma-separated description line, Suno style (e.g. "intimate felt piano, slow 60 BPM, minor key, soft dynamics"). No line breaks, max ~200 words.
-- Weave in the provided music-theory knowledge (tonality, melodic contour, harmonic progressions, production style) — do not just copy the raw spec fields.
-- Respect negative constraints (excluded instruments) with phrases like "no strings", "no vocals".
+1. **Style Box**: A single-line comma-separated Suno prompt (~200 chars max).
+2. **Lyrics Box**: Structural meta-tags using [ ] brackets for the Lyrics input field.
+
+## GOLDEN FORMULA (apply this ordering strictly):
+Genre + Vocal Style + Core Instruments + Vibe/Emotion + Musical Mode + Tempo + Production Quality + Exclusions
+
+## RULES:
+- Output ONLY a JSON object with exactly these fields: "prompt", "explanation", "explanationFa", "warnings".
+- **"prompt"**: single line, comma-separated, no line breaks, max ~200 characters. Follow the Golden Formula order.
+- Respect negative constraints with absolute emphasis: "strictly NO drums", "zero percussion", "completely drumless".
+- Use musical modes (Aeolian, Lydian, Phrygian, Dorian, Mixolydian) instead of generic major/minor when appropriate.
+- Inject production vocabulary: "analog warmth", "tape saturation", "immersive spatial mix", "audiophile mastering", "pristine mix", "shimmer reverb", "wide stereo image".
+- For solo instruments, add anti-hallucination phrases: "unaccompanied solo instrument", "single instrument recording".
 - If the user description is in Persian, translate its meaning into the English prompt.
-- The "explanation" and "explanationFa" fields: 1-3 short sentences each (explanationFa must be natural Persian) describing the key choices made.
-- "warnings": array of strings for auto-adjustments worth flagging (may be empty).
-- Keep the prompt compatible with Suno: descriptive style/genre/mood/instrument/tempo language, avoid artist names, avoid song lyrics.`;
+- **"explanation"** and **"explanationFa"**: 2-4 sentences each (explanationFa must be natural Persian) describing key choices: which mode, which production vocabulary, which compression strategies.
+- **"warnings"**: array of strings for auto-adjustments (may be empty).
+- NEVER include artist names or song lyrics in the style prompt.
+- Use compound adjectives for conciseness: "heart-wrenching" not "very sad and emotional", "deeply brooding" not "very dark", "glacial" not "very slow".
+
+## MODE SELECTION GUIDE:
+- Deep sadness/darkness → Aeolian mode, Phrygian dominant
+- Dreamy/hopeful/ethereal → Lydian mode (raised 4th)
+- Nostalgia/warmth → Mixolydian mode (bVII chord color)
+- Cool sophistication → Dorian mode
+- Unsettling tension → Chromatic / Diminished scales
+- Open simplicity → Pentatonic
+
+## PRODUCTION VOCABULARY GUIDE:
+- For warmth/depth: "analog warmth", "tape saturation", "vinyl crackle", "tube amp warmth"
+- For space: "immersive spatial mix", "wide stereo image", "cathedral reverb", "close-mic intimacy"
+- For quality: "pristine mix", "high fidelity", "audiophile mastering"
+- For raw/grit: "raw overdrive", "analog grit", "lo-fi texture"
+- For ethereal: "shimmer reverb", "granular synthesis texture", "ethereal wash"
+- For cinematic: "wide dynamic range", "Dolby Atmos staging", "cinematic spatial staging"`;
 
 export class AiGenerationError extends Error {
   constructor(message: string, public readonly fallback?: PromptResult) {
@@ -45,6 +70,9 @@ function buildMessages(spec: MusicSpec, fallback: PromptResult): ChatMessage[] {
   const selectedInstruments = instruments.filter((i) => spec.instrumentIds.includes(i.id));
   const excludedInstruments = instruments.filter((i) => spec.excludeInstrumentIds.includes(i.id));
   const templateHint = templates.find((t) => t.genreId === spec.genreId && t.emotionId === spec.emotionId);
+
+  const recommendedMode = getRecommendedMode(spec.emotionId);
+  const recommendedProduction = getRecommendedProduction(spec.emotionId, spec.energyId);
 
   const knowledge = {
     genre: genre
@@ -80,6 +108,13 @@ function buildMessages(spec: MusicSpec, fallback: PromptResult): ChatMessage[] {
     userDescription: spec.description.trim() || null,
     ruleEngineBaseline: fallback.prompt,
     templateHint: templateHint ? { name: templateHint.name, extraPrompt: templateHint.extraPrompt } : null,
+    recommendedMode: recommendedMode
+      ? { name: recommendedMode.name, moodTag: recommendedMode.moodTag, keywords: recommendedMode.promptKeywords }
+      : null,
+    recommendedProduction: recommendedProduction.map((p) => ({
+      label: p.label,
+      keywords: p.keywords.slice(0, 2),
+    })),
   };
 
   return [
@@ -140,10 +175,12 @@ function parseAiResult(content: string, fallback: PromptResult): PromptResult {
 
   return {
     prompt,
+    lyricsMetaTags: fallback.lyricsMetaTags,
     explanation: typeof parsed.explanation === 'string' && parsed.explanation.trim() ? parsed.explanation.trim() : fallback.explanation,
     explanationFa: typeof parsed.explanationFa === 'string' && parsed.explanationFa.trim() ? parsed.explanationFa.trim() : fallback.explanationFa,
     warnings: Array.isArray(parsed.warnings) ? parsed.warnings.filter((w) => typeof w === 'string') : fallback.warnings,
     scores: fallback.scores,
+    tokenAnalysis: fallback.tokenAnalysis,
   };
 }
 

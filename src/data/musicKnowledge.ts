@@ -159,7 +159,7 @@ export const genres: GenreProfile[] = [
   {
     id: 'orchestral',
     name: 'Orchestral',
-    nameFa: 'ارکستral',
+    nameFa: 'ارکستال',
     commonInstruments: ['full string section', 'brass section', 'woodwinds', 'timpani', 'percussion'],
     typicalBPM: [60, 120],
     commonStructure: ['Overture', 'Themes', 'Development', 'Grand finale'],
@@ -435,10 +435,10 @@ export const templates: PromptTemplate[] = [
     name: 'Epic Trailer',
     nameFa: 'تیزر حماسی',
     description: 'Powerful orchestral trailer music',
-    descriptionFa: 'موسیقی ارکستral قدرتمند برای تیزر',
+    descriptionFa: 'موسیقی ارکستال قدرتمند برای تیزر',
     genreId: 'orchestral',
     emotionId: 'epic',
-    instrumentIds: ['brass', 'strings', 'percussion', 'timpani'],
+    instrumentIds: ['brass', 'strings', 'percussion'],
     energyId: 'very-high',
     vocals: 'instrumental',
     extraPrompt: 'massive brass, driving percussion, epic crescendo',
@@ -500,7 +500,7 @@ export const templates: PromptTemplate[] = [
     name: 'Game Music',
     nameFa: 'موسیقی بازی',
     description: 'Adventurous orchestral game soundtrack',
-    descriptionFa: 'موسیقی ارکستral ماجراجویانه برای بازی',
+    descriptionFa: 'موسیقی ارکستال ماجراجویانه برای بازی',
     genreId: 'orchestral',
     emotionId: 'hope',
     instrumentIds: ['strings', 'brass', 'flute', 'percussion'],
@@ -509,3 +509,303 @@ export const templates: PromptTemplate[] = [
     extraPrompt: 'adventurous melody, heroic brass, driving rhythm',
   },
 ];
+
+// ──────────────────────────────────────────────────────────────
+// STRATEGY 2: Mix & Mastering Vocabulary (Production Intent)
+// ──────────────────────────────────────────────────────────────
+
+export interface ProductionIntent {
+  id: string;
+  label: string;
+  labelFa: string;
+  description: string;
+  keywords: string[];
+  emotionAffinity: string[];
+  energyAffinity: string[];
+  tokenCost: number;
+}
+
+export const productionIntents: ProductionIntent[] = [
+  {
+    id: 'warmth',
+    label: 'Analog Warmth',
+    labelFa: 'گرمای آنالوگ',
+    description: 'Tape saturation, vinyl crackle, tube amp warmth',
+    keywords: ['analog warmth', 'tape saturation', 'vinyl crackle', 'tube amp warmth'],
+    emotionAffinity: ['nostalgia', 'romance', 'calm', 'sad'],
+    energyAffinity: ['very-low', 'low', 'medium'],
+    tokenCost: 3,
+  },
+  {
+    id: 'space',
+    label: 'Spatial Audio',
+    labelFa: 'صدای فضایی',
+    description: 'Wide stereo, cathedral reverb, immersive spatial mix',
+    keywords: ['immersive spatial mix', 'wide stereo image', 'cathedral reverb', 'close-mic intimacy'],
+    emotionAffinity: ['epic', 'dark', 'hope', 'calm'],
+    energyAffinity: ['very-low', 'low', 'high', 'very-high'],
+    tokenCost: 3,
+  },
+  {
+    id: 'fidelity',
+    label: 'Audiophile Quality',
+    labelFa: 'کیفیت آدیوفایل',
+    description: 'Pristine mix, high fidelity, audiophile mastering',
+    keywords: ['pristine mix', 'high fidelity', 'audiophile mastering', 'lossless quality'],
+    emotionAffinity: ['calm', 'hope', 'romance'],
+    energyAffinity: ['very-low', 'low', 'medium'],
+    tokenCost: 2,
+  },
+  {
+    id: 'grit',
+    label: 'Raw & Gritty',
+    labelFa: 'خام و زبر',
+    description: 'Overdrive, analog distortion, lo-fi texture',
+    keywords: ['raw overdrive', 'analog grit', 'lo-fi texture', 'saturated tone'],
+    emotionAffinity: ['tension', 'dark', 'epic'],
+    energyAffinity: ['medium', 'high', 'very-high'],
+    tokenCost: 2,
+  },
+  {
+    id: 'ethereal',
+    label: 'Ethereal & Dreamy',
+    labelFa: 'آسمانی و رؤیایی',
+    description: 'Shimmer reverb, granular textures, granular synthesis',
+    keywords: ['shimmer reverb', 'granular synthesis texture', 'ethereal wash', 'dreamlike haze'],
+    emotionAffinity: ['hope', 'calm', 'nostalgia', 'romance'],
+    energyAffinity: ['very-low', 'low'],
+    tokenCost: 3,
+  },
+  {
+    id: 'cinematic-mix',
+    label: 'Cinematic Mix',
+    labelFa: 'میکس سینمایی',
+    description: 'Wide dynamic range, Dolby Atmos staging, orchestral depth',
+    keywords: ['wide dynamic range', 'Dolby Atmos staging', 'orchestral depth', 'cinematic spatial staging'],
+    emotionAffinity: ['epic', 'tension', 'dark', 'hope'],
+    energyAffinity: ['medium', 'high', 'very-high'],
+    tokenCost: 3,
+  },
+];
+
+// ──────────────────────────────────────────────────────────────
+// STRATEGY 5: Advanced Harmony — Musical Modes
+// ──────────────────────────────────────────────────────────────
+
+export interface MusicalMode {
+  id: string;
+  name: string;
+  nameFa: string;
+  description: string;
+  promptKeywords: string[];
+  emotionAffinity: string[];
+  moodTag: string;
+}
+
+export const musicalModes: MusicalMode[] = [
+  {
+    id: 'aeolian',
+    name: 'Aeolian Mode',
+    nameFa: 'مود ائولین',
+    description: 'Natural minor — deep sadness, melancholic gravity',
+    promptKeywords: ['Aeolian mode'],
+    emotionAffinity: ['sad', 'dark', 'anxiety'],
+    moodTag: 'melancholic gravity',
+  },
+  {
+    id: 'phrygian',
+    name: 'Phrygian Dominant',
+    nameFa: 'مود فریجین دومیننت',
+    description: 'Exotic tension, Spanish/Middle Eastern darkness',
+    promptKeywords: ['Phrygian dominant scale'],
+    emotionAffinity: ['tension', 'anxiety', 'dark'],
+    moodTag: 'exotic tension',
+  },
+  {
+    id: 'lydian',
+    name: 'Lydian Mode',
+    nameFa: 'مود لیدین',
+    description: 'Dreamy, floating, ethereal hope with raised 4th',
+    promptKeywords: ['Lydian mode', 'raised 4th interval'],
+    emotionAffinity: ['hope', 'calm', 'romance'],
+    moodTag: 'dreamy suspension',
+  },
+  {
+    id: 'mixolydian',
+    name: 'Mixolydian Mode',
+    nameFa: 'مود میکсолیدین',
+    description: 'Warm nostalgia, bittersweet hopefulness',
+    promptKeywords: ['Mixolydian mode', 'bVII chord color'],
+    emotionAffinity: ['nostalgia', 'happy', 'hope'],
+    moodTag: 'warm nostalgia',
+  },
+  {
+    id: 'dorian',
+    name: 'Dorian Mode',
+    nameFa: 'مود دورین',
+    description: 'Cool jazz sophistication, melancholy with brightness',
+    promptKeywords: ['Dorian mode', 'jazz minor color'],
+    emotionAffinity: ['calm', 'romance', 'nostalgia'],
+    moodTag: 'cool sophistication',
+  },
+  {
+    id: 'chromatic',
+    name: 'Chromatic / Diminished',
+    nameFa: 'کروماتیک / دیمینیشد',
+    description: 'Unsettling, dissonant, horror-like instability',
+    promptKeywords: ['chromatic runs', 'diminished scales'],
+    emotionAffinity: ['anxiety', 'tension', 'dark'],
+    moodTag: 'dissonant instability',
+  },
+  {
+    id: 'pentatonic',
+    name: 'Pentatonic',
+    nameFa: 'پنتاتونیک',
+    description: 'Simple, open, folk-like or world-music simplicity',
+    promptKeywords: ['pentatonic melody', 'open intervals'],
+    emotionAffinity: ['calm', 'happy', 'nostalgia'],
+    moodTag: 'open simplicity',
+  },
+];
+
+// ──────────────────────────────────────────────────────────────
+// STRATEGY 1 & 4: Token Weight Scoring & Compound Adjectives
+// ──────────────────────────────────────────────────────────────
+
+export interface TokenEntry {
+  word: string;
+  weight: number;
+  category: 'genre' | 'instrument' | 'emotion' | 'production' | 'exclusion' | 'modifier' | 'tempo';
+}
+
+export const compoundAdjectives: Record<string, string> = {
+  'very sad': 'heart-wrenching',
+  'very dark': 'deeply brooding',
+  'very happy': 'euphoric',
+  'very slow': 'glacial',
+  'very fast': 'blistering',
+  'very quiet': 'whisper-quiet',
+  'very loud': 'thundering',
+  'very warm': 'deeply saturated',
+  'very cold': 'frost-tinged',
+  'slightly sad': 'bittersweet',
+  'slightly dark': 'shadowed',
+  'slightly happy': 'gently bright',
+  'very emotional': 'devastating',
+  'very peaceful': 'serene',
+  'very intense': 'relentless',
+  'very gentle': 'featherlight',
+  'very rich': 'lush',
+  'very simple': 'minimal',
+  'very big': 'massive',
+  'very small': 'delicate',
+};
+
+const FILLER_WORDS = new Set([
+  'a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+  'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'shall',
+  'should', 'may', 'might', 'must', 'can', 'could', 'to', 'of', 'in',
+  'for', 'on', 'with', 'at', 'by', 'from', 'as', 'into', 'through',
+  'during', 'before', 'after', 'above', 'below', 'between', 'and', 'but',
+  'or', 'nor', 'not', 'so', 'yet', 'both', 'either', 'neither', 'each',
+  'every', 'all', 'any', 'few', 'more', 'most', 'other', 'some', 'such',
+  'no', 'only', 'own', 'same', 'than', 'too', 'very', 'just', 'also',
+  'that', 'this', 'these', 'those', 'it', 'its', 'i', 'me', 'my', 'we',
+  'our', 'you', 'your', 'he', 'him', 'his', 'she', 'her', 'they', 'them',
+  'their', 'what', 'which', 'who', 'whom', 'where', 'when', 'why', 'how',
+  'if', 'then', 'else', 'because', 'since', 'while', 'although', 'though',
+]);
+
+export function getRecommendedMode(emotionId: string): MusicalMode | undefined {
+  return musicalModes.find((m) => m.emotionAffinity.includes(emotionId));
+}
+
+export function getRecommendedProduction(
+  emotionId: string,
+  energyId: string,
+): ProductionIntent[] {
+  return productionIntents.filter(
+    (p) =>
+      p.emotionAffinity.includes(emotionId) &&
+      p.energyAffinity.includes(energyId),
+  );
+}
+
+export function compressPrompt(raw: string, maxChars = 200): {
+  compressed: string;
+  originalTokens: number;
+  compressedTokens: number;
+  tokenWeights: TokenEntry[];
+  savedTokens: string[];
+} {
+  let text = raw;
+  for (const [phrase, replacement] of Object.entries(compoundAdjectives)) {
+    const re = new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+    text = text.replace(re, replacement);
+  }
+
+  const words = text.split(/[\s,]+/).filter(Boolean);
+  const tokenWeights: TokenEntry[] = [];
+  const kept: string[] = [];
+  const savedTokens: string[] = [];
+
+  for (const w of words) {
+    const lower = w.toLowerCase().replace(/[.,;:!?]/g, '');
+    if (FILLER_WORDS.has(lower)) {
+      savedTokens.push(w);
+      continue;
+    }
+    const weight = estimateTokenWeight(lower);
+    tokenWeights.push({ word: w, weight, category: categorizeToken(lower) });
+    kept.push(w);
+  }
+
+  const weighted = [...tokenWeights];
+  weighted.sort((a, b) => b.weight - a.weight);
+
+  let compressed = kept.join(', ');
+  let truncated = false;
+
+  if (compressed.length > maxChars) {
+    truncated = true;
+    const keptSet = new Set<string>();
+    let charCount = 0;
+    for (const entry of weighted) {
+      if (charCount + entry.word.length + 2 > maxChars) break;
+      keptSet.add(entry.word);
+      charCount += entry.word.length + 2;
+    }
+    const finalWords = kept.filter((w) => keptSet.has(w));
+    compressed = finalWords.join(', ');
+  }
+
+  return {
+    compressed,
+    originalTokens: words.length,
+    compressedTokens: compressed.split(/[\s,]+/).filter(Boolean).length,
+    tokenWeights,
+    savedTokens,
+  };
+}
+
+function estimateTokenWeight(word: string): number {
+  if (FILLER_WORDS.has(word)) return 0;
+  if (compoundAdjectives[word]) return 7;
+  if (word.includes('no ') || word.includes('strictly') || word.includes('zero') || word.includes('never')) return 9;
+  if (['genre', 'instrument', 'piano', 'guitar', 'strings', 'drums', 'vocals'].some(k => word.includes(k))) return 9;
+  if (['sad', 'happy', 'dark', 'epic', 'ambient', 'lofi', 'jazz', 'rock', 'classical'].some(k => word.includes(k))) return 8;
+  if (['bpm', 'tempo', 'slow', 'fast', 'moderate'].some(k => word.includes(k))) return 7;
+  if (['reverb', 'saturation', 'mastering', 'mix', 'stereo', 'spatial'].some(k => word.includes(k))) return 6;
+  if (['warm', 'cold', 'soft', 'loud', 'gentle', 'rich'].some(k => word.includes(k))) return 5;
+  return 4;
+}
+
+function categorizeToken(word: string): TokenEntry['category'] {
+  if (word.includes('no ') || word.includes('strictly') || word.includes('zero') || word.includes('never')) return 'exclusion';
+  if (['bpm', 'tempo', 'slow', 'fast', 'moderate', 'rubato'].some(k => word.includes(k))) return 'tempo';
+  if (['reverb', 'saturation', 'mastering', 'mix', 'stereo', 'spatial', 'vinyl', 'analog'].some(k => word.includes(k))) return 'production';
+  if (['piano', 'guitar', 'strings', 'drums', 'vocals', 'synth', 'brass'].some(k => word.includes(k))) return 'instrument';
+  if (['sad', 'happy', 'dark', 'epic', 'calm', 'tension', 'hope'].some(k => word.includes(k))) return 'emotion';
+  if (['cinematic', 'ambient', 'lofi', 'jazz', 'rock', 'classical', 'folk'].some(k => word.includes(k))) return 'genre';
+  return 'modifier';
+}

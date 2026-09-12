@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
   Copy, Check, RotateCcw, AlertTriangle, X, Loader2, Wand2, Settings2, Layers,
   ExternalLink, BookmarkPlus, Bookmark, ChevronDown, RefreshCcw, Music4, Trash2, FileMusic,
-  ShieldCheck, Ban, AudioLines,
+  ShieldCheck, Ban, AudioLines, BarChart3, Music2,
 } from 'lucide-react';
 import type { PromptResult } from '@/utils/promptEngine';
 import type { AiVariant } from '@/utils/aiPrompt';
@@ -84,13 +84,14 @@ export function OutputPanel({
 }: OutputPanelProps) {
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [copiedFull, setCopiedFull] = useState(false);
+  const [copiedMeta, setCopiedMeta] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    if (!copiedPrompt && !copiedFull) return;
-    const t = setTimeout(() => { setCopiedPrompt(false); setCopiedFull(false); }, 2000);
+    if (!copiedPrompt && !copiedFull && !copiedMeta) return;
+    const t = setTimeout(() => { setCopiedPrompt(false); setCopiedFull(false); setCopiedMeta(false); }, 2000);
     return () => clearTimeout(t);
-  }, [copiedPrompt, copiedFull]);
+  }, [copiedPrompt, copiedFull, copiedMeta]);
 
   if (!result || !blueprint) {
     return (
@@ -137,11 +138,35 @@ export function OutputPanel({
     setCopiedFull(true);
   };
 
+  const handleCopyMeta = () => {
+    navigator.clipboard.writeText(result.lyricsMetaTags);
+    setCopiedMeta(true);
+  };
+
   const busy = enhancing || comparing || refining;
 
   const scoreColor = (score: number) => (score >= 90 ? 'text-green-400' : score >= 75 ? 'text-amber-400' : 'text-rose-400');
   const scoreBar = (score: number) => (score >= 90 ? 'bg-green-500' : score >= 75 ? 'bg-amber-500' : 'bg-rose-500');
   const providerName = (id: string) => PROVIDERS.find((p) => p.id === id)?.name ?? id;
+
+  const weightColor = (w: number) => {
+    if (w >= 9) return 'bg-rose-400';
+    if (w >= 7) return 'bg-amber-400';
+    if (w >= 5) return 'bg-sky-400';
+    return 'bg-slate-500';
+  };
+
+  const categoryColor = (cat: string) => {
+    switch (cat) {
+      case 'genre': return 'text-purple-300 bg-purple-500/15';
+      case 'instrument': return 'text-emerald-300 bg-emerald-500/15';
+      case 'emotion': return 'text-rose-300 bg-rose-500/15';
+      case 'production': return 'text-amber-300 bg-amber-500/15';
+      case 'exclusion': return 'text-red-300 bg-red-500/15';
+      case 'tempo': return 'text-cyan-300 bg-cyan-500/15';
+      default: return 'text-slate-300 bg-slate-500/15';
+    }
+  };
 
   return (
     <section className="py-16 px-6 bg-gradient-to-b from-slate-950 to-slate-900">
@@ -556,6 +581,82 @@ export function OutputPanel({
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {/* Lyrics Meta-Tags */}
+        {result.lyricsMetaTags && (
+          <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 overflow-hidden mb-4">
+            <div className="px-6 pt-4 pb-1 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Music2 className="w-4 h-4 text-purple-400" />
+                <span className="text-[10px] uppercase tracking-widest font-bold text-purple-400/80">Lyrics Box — Meta-Tags</span>
+              </div>
+              <button
+                onClick={handleCopyMeta}
+                className="text-[10px] font-medium px-2 py-1 rounded bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 transition-all"
+              >
+                {copiedMeta ? <Check className="w-3 h-3 inline" /> : <Copy className="w-3 h-3 inline" />}
+                {' '}{copiedMeta ? 'Copied' : 'Copy'}
+              </button>
+            </div>
+            <div className="px-6 pb-4">
+              <pre className="text-sm text-purple-200/80 font-mono whitespace-pre-wrap leading-relaxed">{result.lyricsMetaTags}</pre>
+            </div>
+          </div>
+        )}
+
+        {/* Token Weight Visualizer */}
+        {result.tokenAnalysis.prompt.length > 0 && (
+          <div className="rounded-2xl border border-slate-700/50 bg-slate-900/80 overflow-hidden mb-4">
+            <div className="px-6 pt-4 pb-1 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-sky-400" />
+                <span className="text-[10px] uppercase tracking-widest font-bold text-sky-400/80">Token Weight Visualizer</span>
+              </div>
+              <span className="text-[11px] font-mono text-slate-500">
+                {result.tokenAnalysis.charCount}/{result.tokenAnalysis.maxChars} chars
+              </span>
+            </div>
+            <div className="px-6 pb-3">
+              <div className="flex flex-wrap gap-1.5">
+                {result.tokenAnalysis.prompt.map((entry, i) => (
+                  <span
+                    key={`${entry.word}-${i}`}
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-mono border border-white/5 ${categoryColor(entry.category)}`}
+                    title={`Weight: ${entry.weight}/10 · Category: ${entry.category}`}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: weightColor(entry.weight) }} />
+                    {entry.word}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="px-6 pb-4 flex flex-wrap gap-3 border-t border-slate-800 pt-3">
+              <span className="text-[10px] text-slate-500">Weight:</span>
+              {[
+                { label: 'Critical', color: 'bg-rose-400' },
+                { label: 'High', color: 'bg-amber-400' },
+                { label: 'Medium', color: 'bg-sky-400' },
+                { label: 'Low', color: 'bg-slate-500' },
+              ].map((l) => (
+                <span key={l.label} className="flex items-center gap-1 text-[10px] text-slate-500">
+                  <span className={`w-2 h-2 rounded-full ${l.color}`} />
+                  {l.label}
+                </span>
+              ))}
+              <span className="text-[10px] text-slate-600 ml-2">|</span>
+              {[
+                { label: 'Genre', cls: 'text-purple-300' },
+                { label: 'Instrument', cls: 'text-emerald-300' },
+                { label: 'Emotion', cls: 'text-rose-300' },
+                { label: 'Production', cls: 'text-amber-300' },
+                { label: 'Exclusion', cls: 'text-red-300' },
+                { label: 'Tempo', cls: 'text-cyan-300' },
+              ].map((c) => (
+                <span key={c.label} className={`text-[10px] ${c.cls}`}>{c.label}</span>
+              ))}
+            </div>
           </div>
         )}
 
